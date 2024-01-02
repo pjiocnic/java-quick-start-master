@@ -24,21 +24,30 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 public class MappingPOJO {
 
     public static void main(String[] args) {
+    	
         ConnectionString connectionString = new ConnectionString(System.getProperty("mongodb.uri"));
+        
         CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().automatic(true).build());
+        
         CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
+
         MongoClientSettings clientSettings = MongoClientSettings.builder()
                                                                 .applyConnectionString(connectionString)
                                                                 .codecRegistry(codecRegistry)
                                                                 .build();
+        
         try (MongoClient mongoClient = MongoClients.create(clientSettings)) {
+        	
             MongoDatabase db = mongoClient.getDatabase("sample_training");
+            
+            // retrieving is typed by Grade and not by Document 
             MongoCollection<Grade> grades = db.getCollection("grades", Grade.class);
 
             // create a new grade.
             Grade newGrade = new Grade().setStudentId(10003d)
                                         .setClassId(10d)
                                         .setScores(List.of(new Score().setType("homework").setScore(50d)));
+   
             grades.insertOne(newGrade);
             System.out.println("Grade inserted.");
 
@@ -50,6 +59,7 @@ public class MappingPOJO {
             List<Score> newScores = new ArrayList<>(grade.getScores());
             newScores.add(new Score().setType("exam").setScore(42d));
             grade.setScores(newScores);
+            
             Bson filterByGradeId = eq("_id", grade.getId());
             FindOneAndReplaceOptions returnDocAfterReplace = new FindOneAndReplaceOptions().returnDocument(
                     ReturnDocument.AFTER);

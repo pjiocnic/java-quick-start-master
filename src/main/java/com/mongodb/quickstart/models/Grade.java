@@ -1,10 +1,12 @@
 package com.mongodb.quickstart.models;
 
-import org.bson.codecs.pojo.annotations.BsonProperty;
-import org.bson.types.ObjectId;
-
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.bson.types.ObjectId;
 
 public class Grade {
 
@@ -14,6 +16,7 @@ public class Grade {
     @BsonProperty(value = "class_id")
     private Double classId;
     private List<Score> scores;
+    private LocalDateTime scoreDate;
 
     public ObjectId getId() {
         return id;
@@ -48,6 +51,15 @@ public class Grade {
 
     public Grade setScores(List<Score> scores) {
         this.scores = scores;
+        return this;
+    }
+    
+    public LocalDateTime getScoreDate() {
+    	return scoreDate;
+    }
+
+    public Grade setScoreDate(LocalDateTime dt) {
+        this.scoreDate = dt;
         return this;
     }
 
